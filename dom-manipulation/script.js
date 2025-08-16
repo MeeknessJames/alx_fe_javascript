@@ -6,7 +6,12 @@ let quotes = [
     { text: 'It is during our darkest moments that we must focus to see the light.', category: 'Perseverance' },
 ];
 
-// This is the core of DOM manipulation: finding elements to change.
+const storedQuotes = localStorage.getItem('quotes');
+if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+}
+
+// DOM elements
 const quoteDisplay = document.getElementById('quoteDisplay');
 const quoteText = document.getElementById('quoteText');
 const quoteCategory = document.getElementById('quoteCategory');
@@ -15,8 +20,9 @@ const newQuoteText = document.getElementById('newQuoteText');
 const newQuoteCategory = document.getElementById('newQuoteCategory');
 const addQuoteBtn = document.getElementById('addQuoteBtn');
 
-
-function createAddQuoteForm() {
+// Save quotes to localStorage
+function saveQuotes() {
+    localStorage.setItem('quotes', JSON.stringify(quotes));
 }
 
 function showRandomQuote() {
@@ -30,12 +36,13 @@ function showRandomQuote() {
         quoteCategory.innerHTML = randomQuote.category;
         
         quoteDisplay.classList.remove('faded');
+
+        // Save last viewed quote in sessionStorage
+        sessionStorage.setItem('lastQuote', randomQuote.text);
+        sessionStorage.setItem('lastCategory', randomQuote.category);
     }, 300);
 }
 
-/*
- This function handles adding a new quote from the user input fields.
- */
 function addQuote() {
     if (newQuoteText.value.trim() !== '' && newQuoteCategory.value.trim() !== '') {
         const newQuote = {
@@ -44,17 +51,7 @@ function addQuote() {
         };
 
         quotes.push(newQuote);
-
-        // Create DOM elements for the new quote
-        const newQuoteElement = document.createElement('p');
-        newQuoteElement.textContent = newQuote.text;
-
-        const newCategoryElement = document.createElement('span');
-        newCategoryElement.textContent = ` (${newQuote.category})`;
-
-        // Append new quote and category to quoteDisplay
-        quoteDisplay.appendChild(newQuoteElement);
-        quoteDisplay.appendChild(newCategoryElement);
+        saveQuotes(); // persist to localStorage
 
         newQuoteText.value = '';
         newQuoteCategory.value = '';
@@ -66,9 +63,48 @@ function addQuote() {
     }
 }
 
-// This is how we make our application interactive.
+// Export quotes to JSON
+function exportToJsonFile() {
+    const dataStr = JSON.stringify(quotes, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "quotes.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+// Import quotes from JSON
+function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(e) {
+        try {
+            const importedQuotes = JSON.parse(e.target.result);
+            quotes.push(...importedQuotes);
+            saveQuotes();
+            alert('Quotes imported successfully!');
+        } catch (err) {
+            alert('Invalid JSON file!');
+        }
+    };
+    fileReader.readAsText(event.target.files[0]);
+}
+
+// Event listeners
 newQuoteBtn.addEventListener('click', showRandomQuote);
 addQuoteBtn.addEventListener('click', addQuote);
 
-// Let's call the function that creates the form and then show a random quote when the page first loads!
-document.addEventListener('DOMContentLoaded', showRandomQuote);
+// Restore last quote from sessionStorage if available
+document.addEventListener('DOMContentLoaded', () => {
+    const lastQuote = sessionStorage.getItem('lastQuote');
+    const lastCategory = sessionStorage.getItem('lastCategory');
+    if (lastQuote && lastCategory) {
+        quoteText.innerHTML = lastQuote;
+        quoteCategory.innerHTML = lastCategory;
+    } else {
+        showRandomQuote();
+    }
+});
