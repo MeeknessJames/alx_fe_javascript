@@ -27,6 +27,14 @@
             <button id="addQuoteBtn">Add Quote</button>
         </div>
 
+        <!-- Filter quotes by category -->
+        <div class="filter-container">
+            <h3>Filter Quotes by Category</h3>
+            <select id="categoryFilter">
+                <option value="all">All Categories</option>
+            </select>
+        </div>
+
         <!-- Import/Export JSON controls -->
         <div class="json-controls">
             <h3>Import / Export Quotes</h3>
@@ -34,7 +42,7 @@
             <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
         </div>
     </div>
-    
+
     <!-- Link our JavaScript file -->
     <script src="script.js"></script>
 </body>
