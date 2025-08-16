@@ -1,5 +1,3 @@
-// A friendly tutor's notes:
-
 let quotes = [
     { text: 'The only way to do great work is to love what you do.', category: 'Inspiration' },
     { text: 'Spread love everywhere you go. Let no one ever come to you without leaving happier.', category: 'Love' },
@@ -46,6 +44,18 @@ function addQuote() {
         };
 
         quotes.push(newQuote);
+
+        // Create DOM elements for the new quote
+        const newQuoteElement = document.createElement('p');
+        newQuoteElement.textContent = newQuote.text;
+
+        const newCategoryElement = document.createElement('span');
+        newCategoryElement.textContent = ` (${newQuote.category})`;
+
+        // Append new quote and category to quoteDisplay
+        quoteDisplay.appendChild(newQuoteElement);
+        quoteDisplay.appendChild(newCategoryElement);
+
         newQuoteText.value = '';
         newQuoteCategory.value = '';
 
