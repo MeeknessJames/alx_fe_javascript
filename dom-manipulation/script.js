@@ -16,22 +16,26 @@ const newQuoteText = document.getElementById('newQuoteText');
 const newQuoteCategory = document.getElementById('newQuoteCategory');
 const addQuoteBtn = document.getElementById('addQuoteBtn');
 
-
+/*
+  This function handles displaying a random quote on the page.
+ */
 function showRandomQuote() {
+ 
     quoteDisplay.classList.add('faded');
     
     setTimeout(() => {
         const randomIndex = Math.floor(Math.random() * quotes.length);
         const randomQuote = quotes[randomIndex];
 
-        quoteText.textContent = randomQuote.text;
-        quoteCategory.textContent = randomQuote.category;
+        quoteText.innerHTML = randomQuote.text;
+        quoteCategory.innerHTML = randomQuote.category;
 
         quoteDisplay.classList.remove('faded');
-    }, 300);
+    }, 300); 
 }
 
-/* This function handles adding a new quote from the user input fields.
+/*
+  This function handles adding a new quote from the user input fields.
  */
 function addQuote() {
     if (newQuoteText.value.trim() !== '' && newQuoteCategory.value.trim() !== '') {
@@ -44,7 +48,7 @@ function addQuote() {
 
         newQuoteText.value = '';
         newQuoteCategory.value = '';
-
+        
         alert('Quote added successfully!');
         showRandomQuote();
     } else {
@@ -52,7 +56,11 @@ function addQuote() {
     }
 }
 
+// Now, we connect the functions to the buttons.
+// This is how we make our application interactive.
+// We're listening for a 'click' event on each button.
 newQuoteBtn.addEventListener('click', showRandomQuote);
 addQuoteBtn.addEventListener('click', addQuote);
 
+// Let's show a random quote when the page first loads!
 document.addEventListener('DOMContentLoaded', showRandomQuote);
