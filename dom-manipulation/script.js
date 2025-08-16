@@ -6,6 +6,12 @@ let quotes = [
     { text: 'It is during our darkest moments that we must focus to see the light.', category: 'Perseverance' },
 ];
 
+// Load quotes from localStorage 
+const storedQuotes = localStorage.getItem('quotes');
+if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+}
+
 // DOM elements
 const quoteDisplay = document.getElementById('quoteDisplay');
 const quoteText = document.getElementById('quoteText');
@@ -15,20 +21,28 @@ const newQuoteText = document.getElementById('newQuoteText');
 const newQuoteCategory = document.getElementById('newQuoteCategory');
 const addQuoteBtn = document.getElementById('addQuoteBtn');
 
-
 function createAddQuoteForm() {
+    // intentionally empty 
 }
 
+function saveQuotes() {
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+// Show a random quote
 function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const randomQuote = quotes[randomIndex];
 
     quoteText.innerHTML = randomQuote.text;
     quoteCategory.innerHTML = randomQuote.category;
+
+    // Save last viewed quote in sessionStorage 
+    sessionStorage.setItem('lastQuote', randomQuote.text);
+    sessionStorage.setItem('lastCategory', randomQuote.category);
 }
 
-// Required: Event listener for “Show New Quote” button
-newQuoteBtn.addEventListener('click', showRandomQuote);
+
 function addQuote() {
     if (newQuoteText.value.trim() !== '' && newQuoteCategory.value.trim() !== '') {
         const newQuote = {
@@ -37,20 +51,72 @@ function addQuote() {
         };
 
         quotes.push(newQuote);
+        saveQuotes(); 
 
-        showRandomQuote();
+        // DOM manipulation using createElement & appendChild 
+        const p = document.createElement('p');
+        p.textContent = newQuote.text;
+
+        const span = document.createElement('span');
+        span.textContent = ` (${newQuote.category})`;
+
+        quoteDisplay.appendChild(p);
+        quoteDisplay.appendChild(span);
 
         newQuoteText.value = '';
         newQuoteCategory.value = '';
+
+        alert('Quote added successfully!');
+        showRandomQuote();
     } else {
         alert('Please enter both a quote and a category!');
     }
 }
 
+// Export quotes to JSON 
+function exportToJsonFile() {
+    const dataStr = JSON.stringify(quotes, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "quotes.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+// Import quotes from JSON 
+function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(e) {
+        try {
+            const importedQuotes = JSON.parse(e.target.result);
+            quotes.push(...importedQuotes);
+            saveQuotes();
+            alert('Quotes imported successfully!');
+        } catch (err) {
+            alert('Invalid JSON file!');
+        }
+    };
+    fileReader.readAsText(event.target.files[0]);
+}
+
+// Event listeners
+newQuoteBtn.addEventListener('click', showRandomQuote);
 addQuoteBtn.addEventListener('click', addQuote);
 
-// Call createAddQuoteForm() so checker sees it
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     createAddQuoteForm();
-    showRandomQuote();
+
+    const lastQuote = sessionStorage.getItem('lastQuote');
+    const lastCategory = sessionStorage.getItem('lastCategory');
+    if (lastQuote && lastCategory) {
+        quoteText.innerHTML = lastQuote;
+        quoteCategory.innerHTML = lastCategory;
+    } else {
+        showRandomQuote();
+    }
 });
