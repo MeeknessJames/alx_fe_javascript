@@ -21,7 +21,7 @@ const addQuoteBtn = document.getElementById('addQuoteBtn');
 function createAddQuoteForm() {
 }
 
-function displayRandomQuote() {
+function showRandomQuote() {
     quoteDisplay.classList.add('faded');
     
     setTimeout(() => {
@@ -50,18 +50,15 @@ function addQuote() {
         newQuoteCategory.value = '';
 
         alert('Quote added successfully!');
-        displayRandomQuote();
+        showRandomQuote();
     } else {
         alert('Please enter both a quote and a category!');
     }
 }
 
 // This is how we make our application interactive.
-newQuoteBtn.addEventListener('click', displayRandomQuote);
+newQuoteBtn.addEventListener('click', showRandomQuote);
 addQuoteBtn.addEventListener('click', addQuote);
 
 // Let's call the function that creates the form and then show a random quote when the page first loads!
-document.addEventListener('DOMContentLoaded', () => {
-    createAddQuoteForm();
-    displayRandomQuote();
-});
+document.addEventListener('DOMContentLoaded', showRandomQuote);
