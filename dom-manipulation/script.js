@@ -1,4 +1,5 @@
 // A friendly tutor's notes:
+
 let quotes = [
     { text: 'The only way to do great work is to love what you do.', category: 'Inspiration' },
     { text: 'Spread love everywhere you go. Let no one ever come to you without leaving happier.', category: 'Love' },
@@ -16,11 +17,11 @@ const newQuoteText = document.getElementById('newQuoteText');
 const newQuoteCategory = document.getElementById('newQuoteCategory');
 const addQuoteBtn = document.getElementById('addQuoteBtn');
 
-/*
-  This function handles displaying a random quote on the page.
- */
-function showRandomQuote() {
- 
+
+function createAddQuoteForm() {
+}
+
+function displayRandomQuote() {
     quoteDisplay.classList.add('faded');
     
     setTimeout(() => {
@@ -29,13 +30,13 @@ function showRandomQuote() {
 
         quoteText.innerHTML = randomQuote.text;
         quoteCategory.innerHTML = randomQuote.category;
-
+        
         quoteDisplay.classList.remove('faded');
-    }, 300); 
+    }, 300);
 }
 
 /*
-  This function handles adding a new quote from the user input fields.
+ This function handles adding a new quote from the user input fields.
  */
 function addQuote() {
     if (newQuoteText.value.trim() !== '' && newQuoteCategory.value.trim() !== '') {
@@ -45,22 +46,22 @@ function addQuote() {
         };
 
         quotes.push(newQuote);
-
         newQuoteText.value = '';
         newQuoteCategory.value = '';
-        
+
         alert('Quote added successfully!');
-        showRandomQuote();
+        displayRandomQuote();
     } else {
         alert('Please enter both a quote and a category!');
     }
 }
 
-// Now, we connect the functions to the buttons.
 // This is how we make our application interactive.
-// We're listening for a 'click' event on each button.
-newQuoteBtn.addEventListener('click', showRandomQuote);
+newQuoteBtn.addEventListener('click', displayRandomQuote);
 addQuoteBtn.addEventListener('click', addQuote);
 
-// Let's show a random quote when the page first loads!
-document.addEventListener('DOMContentLoaded', showRandomQuote);
+// Let's call the function that creates the form and then show a random quote when the page first loads!
+document.addEventListener('DOMContentLoaded', () => {
+    createAddQuoteForm();
+    displayRandomQuote();
+});
